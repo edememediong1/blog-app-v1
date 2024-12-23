@@ -16,7 +16,7 @@ router.get("", async (req, res) => {
             description: "Welcome to my blog"
         }
 
-        let perPage = 10;
+        let perPage = 6;
         let page = req.query.page || 1;
 
         const data = await Post.aggregate([{ $sort : { createdAt: -1}}])
@@ -24,7 +24,7 @@ router.get("", async (req, res) => {
         .limit(perPage)
         .exec();
 
-        const count = await Post.count();
+        const count = await Post.countDocuments();
         const nextPage = parseInt(page) + 1;
         const hasNextPage = nextPage <= Math.ceil(count / perPage)
         
@@ -40,6 +40,28 @@ router.get("", async (req, res) => {
 })
 
 
+/*
+    GET
+    POST :id
+*/
+
+
+router.get("/post/:id", async (req, res) => {
+
+    try {
+        const locals = {
+            title: "Nodejs Blog",
+            description: "Welcome to my blog"
+        }
+
+        let slug = req.params.id;
+    
+        const data = await Post.findById({_id : slug})
+        res.render("post", {locals, data})
+    } catch (error) {
+        console.log(error)
+    }
+})
 
 
 router.get("/about", (req, res)=> {
