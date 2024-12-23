@@ -49,19 +49,49 @@ router.get("", async (req, res) => {
 router.get("/post/:id", async (req, res) => {
 
     try {
-        const locals = {
-            title: "Nodejs Blog",
-            description: "Welcome to my blog"
-        }
-
         let slug = req.params.id;
     
         const data = await Post.findById({_id : slug})
+
+        const locals = {
+            title: data.title,
+            description: data.body
+        }
+
         res.render("post", {locals, data})
     } catch (error) {
         console.log(error)
     }
 })
+
+/*
+    POST
+    Post :searchItem
+*/
+router.post("/search", async (req, res) => {
+    try {
+        const locals = {
+            title: "Search Results",
+            description: "Search Results"
+        }
+
+        let searchTerm = req.body.searchTerm;
+        let searchNoSpecialChar = search.replace(/[^a-zA-Z0-9]/g, ' ')  
+
+
+        const data = await Post.find({
+            $or: [
+                {title: {$regex: new RegExp(searchNoSpecialChar, 'i') }},
+                {body: {$regex: new RegExp(searchNoSpecialChar, 'i') }} 
+            ]
+        })
+        res.render("search", {locals, data})
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+
 
 
 router.get("/about", (req, res)=> {
