@@ -76,7 +76,7 @@ router.post("/search", async (req, res) => {
         }
 
         let searchTerm = req.body.searchTerm;
-        let searchNoSpecialChar = search.replace(/[^a-zA-Z0-9]/g, ' ')  
+        let searchNoSpecialChar = searchTerm.replace(/[^a-zA-Z0-9]/g, ' ')  
 
 
         const data = await Post.find({
